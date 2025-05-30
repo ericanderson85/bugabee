@@ -2,11 +2,22 @@
 <html lang="en">
 <head>
     <title>Camera Stream</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<h1>Live Camera Stream</h1>
-<video width="1920" height="1080" controls autoplay>
-    <source src="/stream" type="video/mp4">
-</video>
+<video id="video" autoplay muted></video>
+<script>
+    const video = document.getElementById("video");
+    if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource("/hls/stream.m3u8");
+        hls.attachMedia(video);
+    } else if (
+        video.canPlayType("application/vnd.apple.mpegurl")
+    ) {
+        video.src = "/hls/stream.m3u8";
+    }
+</script>
 </body>
 </html>

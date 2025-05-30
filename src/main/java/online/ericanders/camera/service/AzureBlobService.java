@@ -6,12 +6,10 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 @Service
 public class AzureBlobService {
@@ -32,6 +30,7 @@ public class AzureBlobService {
         try (FileInputStream fileStream = new FileInputStream(file)) {
             BlobClient blob = containerClient.getBlobClient(file.getName());
             blob.upload(fileStream, file.length());
+            boolean ignored = file.delete();
             return blob.getBlobUrl();
         }
     }
