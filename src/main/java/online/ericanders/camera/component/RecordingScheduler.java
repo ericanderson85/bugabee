@@ -6,14 +6,21 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @Component
 public class RecordingScheduler {
     private final StreamMultiplexer multiplexer;
     private final AzureBlobService blobService;
-    private final ExecutorService uploadExecutor = Executors.newFixedThreadPool(2);
+    private final ThreadPoolExecutor uploadExecutor =
+            new ThreadPoolExecutor(
+                    1,
+                    2,
+                    60, TimeUnit.SECONDS,
+                    new ArrayBlockingQueue<>(4),
+                    new ThreadPoolExecutor.CallerRunsPolicy()
+            );
+
 
     public RecordingScheduler(StreamMultiplexer multiplexer, AzureBlobService blobService) {
         this.multiplexer = multiplexer;
